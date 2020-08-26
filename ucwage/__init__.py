@@ -33,7 +33,9 @@ class UCWage:
         # 'nd':'1588809589891',
         # 'rows': '3000',
         'page': '1',
-        'sidx': 'EAW_LST_NAM'
+        'sidx': 'EAW_LST_NAM',
+        'startSal': '0',
+        'endSal': '9999999'
     }
     # DANR only exists before 2013, Hastings and ASUCLA added after 2017
     LOCATIONS = {'Hastings', 'UCOP', 'ASUCLA', 'Merced', 'Los Angeles', 'DANR',
@@ -89,7 +91,7 @@ class UCWage:
         if int(data['rows']) > 0:
             try:
                 response = requests.post(self.URL, headers=self.HEADERS, data=data)
-                response = json.loads(response.text.replace("'", "\""))
+                response = json.loads(response.text.replace("'", "\""), strict=False)
                 salary = (person['cell'] for person in response['rows'])
 
             except Exception as e:
@@ -105,7 +107,7 @@ class UCWage:
                                      'RegularPay', 'OvertimePay', 'OtherPay'])
                     writer.writerows(salary)
             # if data was written to csv, then the return will be empty
-        return salary
+            return salary
 
 
 def main():
